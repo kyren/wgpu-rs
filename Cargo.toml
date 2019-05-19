@@ -20,10 +20,11 @@ metal = ["wgn/gfx-backend-metal"]
 dx11 = ["wgn/gfx-backend-dx11"]
 dx12 = ["wgn/gfx-backend-dx12"]
 vulkan = ["wgn/gfx-backend-vulkan"]
+gl = ["wgn/gfx-backend-gl"]
 
 [dependencies]
 #TODO: only depend on the published version
-wgn = { package = "wgpu-native", features = ["local", "window-winit"], git = "https://github.com/gfx-rs/wgpu", rev = "5b6549febccdc93f344a2b776b9a548b17afcf2f" }
+wgn = { package = "wgpu-native", features = ["local", "window-winit"], git = "https://github.com/kyren/wgpu", rev = "ca394e76fd684beb938d53f18499c6b11cf48f61" }
 arrayvec = "0.4"
 
 [dev-dependencies]
