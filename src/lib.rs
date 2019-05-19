@@ -58,6 +58,9 @@ pub use wgn::{
     VertexFormat,
 };
 
+#[cfg(feature = "gl")]
+pub use wgn::glutin;
+
 //TODO: avoid heap allocating vectors during resource creation.
 #[derive(Default)]
 struct Temp {
@@ -66,6 +69,7 @@ struct Temp {
     command_buffers: Vec<wgn::CommandBufferId>,
 }
 
+#[cfg(not(feature = "gl"))]
 pub struct Instance {
     id: wgn::InstanceId,
 }
@@ -291,6 +295,7 @@ where
     }
 }
 
+#[cfg(not(feature = "gl"))]
 impl Instance {
     pub fn new() -> Self {
         Instance {
@@ -314,6 +319,21 @@ impl Instance {
     pub fn create_surface_with_metal_layer(&self, window: *mut std::ffi::c_void) -> Surface {
         Surface {
             id: wgn::wgpu_instance_create_surface_from_macos_layer(self.id, window),
+        }
+    }
+}
+
+#[cfg(feature = "gl")]
+impl Surface {
+    pub fn create(windowed_context: wgn::glutin::WindowedContext) -> Surface {
+        Surface {
+            id: wgn::wgpu_gl_create_surface(windowed_context)
+        }
+    }
+
+    pub fn get_adapter(&self, desc: &AdapterDescriptor) -> Adapter {
+        Adapter {
+            id: wgn::wgpu_gl_surface_get_adapter(self.id, desc),
         }
     }
 }
