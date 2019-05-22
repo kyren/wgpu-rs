@@ -312,9 +312,9 @@ impl Instance {
     }
 
     #[cfg(all(feature = "gl", target_arch = "wasm32"))]
-    pub fn new(canvas_id: String) -> Self {
+    pub fn new(canvas: web_sys::HtmlCanvasElement) -> Self {
         Instance {
-            id: wgn::wgpu_create_webgl_instance(canvas_id)
+            id: wgn::wgpu_create_webgl_instance(canvas)
         }
     }
 

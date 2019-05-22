@@ -33,6 +33,10 @@ wasm-bindgen = "0.2.44"
 console_error_panic_hook = "0.1.6"
 console_log = "0.1.2"
 
+[target.'cfg(target_arch = "wasm32")'.dependencies.web-sys]
+version = "0.3.6"
+features = [ "Element", "HtmlCanvasElement" ]
+
 [dev-dependencies]
 cgmath = "0.17"
 env_logger = "0.6"

@@ -67,8 +67,17 @@ fn main() {
 
     #[cfg(all(feature = "gl", target_arch = "wasm32"))]
     let (instance, size, surface) = {
-        let size = (800, 600);
-        let instance = wgpu::Instance::new("canvas".to_owned());
+        let canvas = web_sys::window()
+            .unwrap()
+            .document()
+            .unwrap()
+            .get_element_by_id(&"canvas")
+            .unwrap()
+            .dyn_into::<web_sys::HtmlCanvasElement>()
+            .unwrap();
+
+        let size = (canvas.width(), canvas.height());
+        let instance = wgpu::Instance::new(canvas);
         let surface = instance.get_surface();
 
         (instance, size, surface)
