@@ -1,4 +1,15 @@
+#[cfg(target_arch = "wasm32")]
+use wasm_bindgen::prelude::*;
+
+#[cfg(target_arch = "wasm32")]
+#[wasm_bindgen(start)]
+pub fn wasm_main() {
+    std::panic::set_hook(Box::new(console_error_panic_hook::hook));
+    main();
+}
+
 fn main() {
+    #[cfg(not(target_arch = "wasm32"))]
     use wgpu::winit::{
         ElementState,
         Event,
@@ -8,8 +19,13 @@ fn main() {
         WindowEvent,
     };
 
+    #[cfg(target_arch = "wasm32")]
+    console_log::init_with_level(log::Level::Debug).unwrap();
+
+    #[cfg(not(target_arch = "wasm32"))]
     env_logger::init();
 
+    #[cfg(not(target_arch = "wasm32"))]
     let mut events_loop = EventsLoop::new();
 
     #[cfg(not(feature = "gl"))]
@@ -22,14 +38,15 @@ fn main() {
         let size = window
             .get_inner_size()
             .unwrap()
-            .to_physical(window.get_hidpi_factor());
+            .to_physical(window.get_hidpi_factor())
+            .into::<(u32, u32)>();
 
         let surface = instance.create_surface(&window);
 
         (window, instance, size, surface)
     };
 
-    #[cfg(feature = "gl")]
+    #[cfg(all(feature = "gl", not(target_arch = "wasm32")))]
     let (instance, size, surface) = {
         let wb = wgpu::winit::WindowBuilder::new();
         let cb = wgpu::glutin::ContextBuilder::new().with_vsync(true);
@@ -39,9 +56,19 @@ fn main() {
             .window()
             .get_inner_size()
             .unwrap()
-            .to_physical(context.window().get_hidpi_factor());
+            .to_physical(context.window().get_hidpi_factor())
+            .into::<(u32, u32)>();
 
         let instance = wgpu::Instance::new(context);
+        let surface = instance.get_surface();
+
+        (instance, size, surface)
+    };
+
+    #[cfg(all(feature = "gl", target_arch = "wasm32"))]
+    let (instance, size, surface) = {
+        let size = (800, 600);
+        let instance = wgpu::Instance::new("canvas".to_owned());
         let surface = instance.get_surface();
 
         (instance, size, surface)
@@ -108,31 +135,39 @@ fn main() {
         &wgpu::SwapChainDescriptor {
             usage: wgpu::TextureUsage::OUTPUT_ATTACHMENT,
             format: wgpu::TextureFormat::Bgra8Unorm,
-            width: size.width.round() as u32,
-            height: size.height.round() as u32,
+            width: size.0,
+            height: size.1,
         },
     );
     let mut running = true;
     while running {
-        events_loop.poll_events(|event| match event {
-            Event::WindowEvent { event, .. } => match event {
-                WindowEvent::KeyboardInput {
-                    input:
-                        KeyboardInput {
-                            virtual_keycode: Some(code),
-                            state: ElementState::Pressed,
-                            ..
-                        },
-                    ..
-                } => match code {
-                    VirtualKeyCode::Escape => running = false,
+        #[cfg(target_arch = "wasm32")]
+        {
+            running = false;
+        }
+
+        #[cfg(not(target_arch = "wasm32"))]
+        {
+            events_loop.poll_events(|event| match event {
+                Event::WindowEvent { event, .. } => match event {
+                    WindowEvent::KeyboardInput {
+                        input:
+                            KeyboardInput {
+                                virtual_keycode: Some(code),
+                                state: ElementState::Pressed,
+                                ..
+                            },
+                        ..
+                    } => match code {
+                        VirtualKeyCode::Escape => running = false,
+                        _ => {}
+                    },
+                    WindowEvent::CloseRequested => running = false,
                     _ => {}
                 },
-                WindowEvent::CloseRequested => running = false,
                 _ => {}
-            },
-            _ => {}
-        });
+            });
+        }
 
         let frame = swap_chain.get_next_texture();
         let mut encoder =

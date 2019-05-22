@@ -23,9 +23,15 @@ vulkan = ["wgn/gfx-backend-vulkan"]
 gl = ["wgn/gfx-backend-gl"]
 
 [dependencies]
-#TODO: only depend on the published version
-wgn = { package = "wgpu-native", features = ["local", "window-winit"], git = "https://github.com/kyren/wgpu", rev = "ca394e76fd684beb938d53f18499c6b11cf48f61" }
 arrayvec = "0.4"
+#TODO: only depend on the published version
+#wgn = { package = "wgpu-native", features = ["local", "window-winit"], git = "https://github.com/gfx-rs/wgpu", rev = "5b6549febccdc93f344a2b776b9a548b17afcf2f" }
+wgn = { package = "wgpu-native", features = ["local", "window-winit"], git = "https://github.com/kyren/wgpu", branch = "godzilla" }
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+wasm-bindgen = "0.2.44"
+console_error_panic_hook = "0.1.6"
+console_log = "0.1.2"
 
 [dev-dependencies]
 cgmath = "0.17"
