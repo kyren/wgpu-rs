@@ -24,7 +24,7 @@ gl = ["wgn/gfx-backend-gl"]
 
 [dependencies]
 #TODO: only depend on the published version
-wgn = { package = "wgpu-native", features = ["local", "window-winit"], git = "https://github.com/kyren/wgpu", rev = "ca394e76fd684beb938d53f18499c6b11cf48f61" }
+wgn = { package = "wgpu-native", features = ["local", "window-winit"], git = "https://github.com/gfx-rs/wgpu", rev = "925718ff6d4bff44069a842d8db56dfd054165b8" }
 arrayvec = "0.4"
 
 [dev-dependencies]
