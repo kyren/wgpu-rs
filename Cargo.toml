@@ -1,6 +1,6 @@
 [package]
 name = "wgpu"
-version = "0.2.2"
+version = "0.2.3"
 authors = [
 	"Dzmitry Malyshau <kvark@mozilla.com>",
 	"Joshua Groves <josh@joshgroves.com>",
@@ -26,6 +26,10 @@ gl = ["wgn/gfx-backend-gl"]
 #TODO: only depend on the published version
 wgn = { package = "wgpu-native", version = "0.2.6", features = ["local", "window-winit"], git = "https://github.com/gfx-rs/wgpu", rev = "dbef9f397eda87b82ae1691b2f7e8ba0f3e2e5d2" }
 arrayvec = "0.4"
+
+[target.'cfg(target_arch = "wasm32")'.dependencies.web-sys]
+version = "0.3.6"
+features = [ "Element", "HtmlCanvasElement" ]
 
 [dev-dependencies]
 cgmath = "0.17"

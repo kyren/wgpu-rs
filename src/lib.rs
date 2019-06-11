@@ -7,7 +7,6 @@ use std::ops::Range;
 use std::ptr;
 use std::slice;
 
-pub use wgn::winit;
 pub use wgn::{
     AdapterDescriptor,
     AddressMode,
@@ -61,7 +60,10 @@ pub use wgn::{
     VertexFormat,
 };
 
-#[cfg(feature = "gl")]
+#[cfg(not(target_arch = "wasm32"))]
+pub use wgn::winit;
+
+#[cfg(all(feature = "gl", not(target_arch = "wasm32")))]
 pub use wgn::glutin;
 
 //TODO: avoid heap allocating vectors during resource creation.
@@ -466,10 +468,17 @@ impl Instance {
         }
     }
 
-    #[cfg(feature = "gl")]
+    #[cfg(all(feature = "gl", not(target_arch = "wasm32")))]
     pub fn new(windowed_context: wgn::glutin::WindowedContext) -> Self {
         Instance {
             id: wgn::wgpu_create_gl_instance(windowed_context),
+        }
+    }
+
+    #[cfg(all(feature = "gl", target_arch = "wasm32"))]
+    pub fn new(canvas: web_sys::HtmlCanvasElement) -> Self {
+        Instance {
+            id: wgn::wgpu_create_webgl_instance(canvas)
         }
     }
 
