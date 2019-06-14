@@ -23,8 +23,7 @@ vulkan = ["wgn/gfx-backend-vulkan"]
 gl = ["wgn/gfx-backend-gl"]
 
 [dependencies]
-#TODO: only depend on the published version
-wgn = { package = "wgpu-native", version = "0.2.6", features = ["local", "window-winit"], git = "https://github.com/gfx-rs/wgpu", rev = "dbef9f397eda87b82ae1691b2f7e8ba0f3e2e5d2" }
+wgn = { package = "wgpu-native", features = ["local", "window-winit"], git = "https://github.com/kyren/wgpu", branch = "mothra" }
 arrayvec = "0.4"
 
 [target.'cfg(target_arch = "wasm32")'.dependencies.web-sys]
