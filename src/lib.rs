@@ -563,12 +563,10 @@ impl Device {
     }
 
     /// Creates a shader module from SPIR-V source code.
-    pub fn create_shader_module(&self, spv: &[u8]) -> ShaderModule {
+    pub fn create_shader_module(&self, spv: &[u32]) -> ShaderModule {
         let desc = wgn::ShaderModuleDescriptor {
-            code: wgn::ByteArray {
-                bytes: spv.as_ptr(),
-                length: spv.len(),
-            },
+            code: spv.as_ptr(),
+            code_length: spv.len(),
         };
         ShaderModule {
             id: wgn::wgpu_device_create_shader_module(self.id, &desc),
