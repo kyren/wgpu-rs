@@ -469,7 +469,7 @@ impl Instance {
     }
 
     #[cfg(all(feature = "gl", not(target_arch = "wasm32")))]
-    pub fn new(windowed_context: wgn::glutin::WindowedContext) -> Self {
+    pub fn new(windowed_context: wgn::glutin::WindowedContext<wgn::glutin::PossiblyCurrent>) -> Self {
         Instance {
             id: wgn::wgpu_create_gl_instance(windowed_context),
         }
