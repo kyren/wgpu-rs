@@ -520,6 +520,7 @@ where
 
 impl Surface {
     /// Creates a surface from a raw window handle.
+    #[cfg(not(target_arch = "wasm32"))]
     pub fn create<W: raw_window_handle::HasRawWindowHandle>(window: &W) -> Self {
         Surface {
             id: wgn::wgpu_create_surface(window.raw_window_handle()),
@@ -531,6 +532,12 @@ impl Surface {
         Surface {
             id: wgn::wgpu_create_surface_from_metal_layer(layer),
         }
+    }
+
+    #[cfg(target_arch = "wasm32")]
+    pub fn create_with_element() -> (Self, wgn::SurfaceElement) {
+        let (surface_id, element) = wgn::wgpu_create_surface_with_element();
+        (Surface { id: surface_id }, element)
     }
 }
 
